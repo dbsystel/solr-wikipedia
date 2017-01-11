@@ -13,6 +13,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.Reader;
 
+import de.tudarmstadt.ukp.jwktl.api.entry.WikiString;
 /**
  * SAX-based implementation of WikiMediaXMLParser.
  *
@@ -88,11 +89,13 @@ public class SAXWikiMediaParser<T> implements WikiMediaXMLParser<T> {
                         break;
                     case title:
                         String title = buffer.toString();
-                        handler.title(title.trim());
+			WikiString wTitle = new WikiString(title.trim());
+                        handler.title(wTitle.getPlainText());
                         break;
                     case text:
                         String text = buffer.toString();
-                        handler.text(text.trim());
+			WikiString wText = new WikiString(text.trim());
+                        handler.text(wText.getPlainText());
                         break;
                     case timestamp:
                         String timestamp = buffer.toString();
