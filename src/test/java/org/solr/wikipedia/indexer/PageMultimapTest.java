@@ -26,14 +26,14 @@ public class PageMultimapTest {
         Assert.assertTrue(multimap.containsKey(
                 IndexField.id.name()));
 
-        Assert.assertTrue(multimap.containsKey(IndexField.TITLE.name()));
+        Assert.assertTrue(multimap.containsKey(IndexField.title.name()));
         Assert.assertEquals(page.getTitle(),
-                multimap.get(IndexField.TITLE.name()).iterator().next());
+                multimap.get(IndexField.title.name()).iterator().next());
 
         Assert.assertTrue(multimap.containsKey(
-                IndexField.REVISION_TEXT.name()));
+                IndexField.content.name()));
         Assert.assertTrue(multimap.containsKey(
-                IndexField.REVISION_TIMESTAMP.name()));
+                IndexField.content.name()));
     }
 
 }
