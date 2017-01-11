@@ -24,7 +24,6 @@ public class Page {
         this.namespace = builder.namespace;
         this.revisions = builder.revisions;
         Validate.notEmpty(title);
-        Validate.notEmpty(pageId);
         Validate.notEmpty(namespace);
         Validate.notEmpty(revisions);
     }

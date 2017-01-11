@@ -2,9 +2,12 @@ package org.solr.wikipedia.indexer;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.solr.wikipedia.model.Page;
 import org.solr.wikipedia.model.Revision;
+
+import java.util.UUID;
 
 /**
  * Produces the Multimap of key/value pairs for a given Page to index in Solr.
@@ -22,7 +25,12 @@ public class PageMultimap {
 
     public Multimap<String,Object> getMultimap() {
         Multimap<String,Object> multimap = HashMultimap.create();
-        multimap.put(IndexField.id.name(), String.format("%s:%s", page.getNamespace(), page.getPageId()));
+        if (StringUtils.isNoneBlank(page.getNamespace(), page.getPageId())) {
+            multimap.put(IndexField.id.name(), String.format("%s:%s", page.getNamespace(), page.getPageId()));
+        } else {
+            multimap.put(IndexField.id.name(), UUID.randomUUID().toString());
+        }
+
         multimap.put(IndexField.namespace.name(), page.getNamespace());
         multimap.put(IndexField.pageId.name(), page.getPageId());
 
