@@ -1,5 +1,6 @@
 package org.solr.wikipedia.parser;
 
+import org.apache.commons.lang3.StringUtils;
 import org.solr.wikipedia.handler.PageHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -12,6 +13,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.stream.Collectors;
 
 import de.tudarmstadt.ukp.jwktl.api.entry.WikiString;
 /**
@@ -51,6 +53,8 @@ public class SAXWikiMediaParser<T> implements WikiMediaXMLParser<T> {
 
         private StringBuilder buffer;
 
+        private boolean isRevision = false;
+
         public PageContentHandler(PageHandler<T> handler) {
             this.handler = handler;
             this.buffer = new StringBuilder();
@@ -66,6 +70,7 @@ public class SAXWikiMediaParser<T> implements WikiMediaXMLParser<T> {
                         handler.startPage();
                         break;
                     case revision:
+                        isRevision = true;
                         handler.startRevision();
                         break;
                     default:
@@ -81,21 +86,35 @@ public class SAXWikiMediaParser<T> implements WikiMediaXMLParser<T> {
             try {
                 currElement = PageElement.valueOf(localName);
                 switch(currElement) {
+                    case id:
+                        if (!isRevision) {
+                            handler.pageId(buffer.toString());
+                        }
+                        break;
+                    case ns:
+                        String namespace = buffer.toString();
+                        handler.namespace(namespace);
+                        break;
                     case page:
                         handler.endPage();
                         break;
                     case revision:
                         handler.endRevision();
+                        isRevision = false;
                         break;
                     case title:
                         String title = buffer.toString();
-			WikiString wTitle = new WikiString(title.trim());
+                        WikiString wTitle = new WikiString(title.trim());
                         handler.title(wTitle.getPlainText());
                         break;
                     case text:
                         String text = buffer.toString();
-			WikiString wText = new WikiString(text.trim());
+                        WikiString wText = new WikiString(text.trim());
                         handler.text(wText.getPlainText());
+                        handler.categories(wText.getWikiLinks().stream()
+                                .filter(l -> StringUtils.startsWith(l, "Category:"))
+                                .map(c -> StringUtils.removeStart(c, "Category:"))
+                                .collect(Collectors.toSet()));
                         break;
                     case timestamp:
                         String timestamp = buffer.toString();

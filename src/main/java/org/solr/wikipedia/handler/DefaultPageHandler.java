@@ -5,6 +5,7 @@ import org.solr.wikipedia.model.Page;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 
 import static org.solr.wikipedia.model.Page.PageBuilder;
 import static org.solr.wikipedia.model.Revision.RevisionBuilder;
@@ -29,6 +30,16 @@ public class DefaultPageHandler implements PageHandler<Page> {
     }
 
     @Override
+    public void pageId(String pageId) {
+        pageBuilder.pageId(pageId);
+    }
+
+    @Override
+    public void namespace(String namespace) {
+        pageBuilder.namespace(namespace);
+    }
+
+    @Override
     public void startRevision() {
         revisionBuilder = new RevisionBuilder();
     }
@@ -48,6 +59,11 @@ public class DefaultPageHandler implements PageHandler<Page> {
     @Override
     public void text(String text) {
         revisionBuilder.text(text);
+    }
+
+    @Override
+    public void categories(Collection<String> categories) {
+        revisionBuilder.categories(categories);
     }
 
     @Override

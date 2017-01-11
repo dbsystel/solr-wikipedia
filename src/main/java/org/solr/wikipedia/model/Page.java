@@ -14,19 +14,31 @@ import java.util.List;
  */
 public class Page {
 
-    private final String title;
+    private final String title, pageId, namespace;
 
     private final List<Revision> revisions;
 
     private Page(PageBuilder builder) {
         this.title = builder.title;
+        this.pageId = builder.pageId;
+        this.namespace = builder.namespace;
         this.revisions = builder.revisions;
         Validate.notEmpty(title);
+        Validate.notEmpty(pageId);
+        Validate.notEmpty(namespace);
         Validate.notEmpty(revisions);
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public String getPageId() {
+        return pageId;
+    }
+
+    public String getNamespace() {
+        return namespace;
     }
 
     public List<Revision> getRevisions() {
@@ -66,6 +78,8 @@ public class Page {
      */
     public static class PageBuilder {
         private String title;
+        private String pageId;
+        private String namespace;
         private List<Revision> revisions;
 
         public PageBuilder title(String title) {
@@ -78,6 +92,16 @@ public class Page {
                 this.revisions = new ArrayList<>();
             }
             this.revisions.add(revision);
+            return this;
+        }
+
+        public PageBuilder pageId(String pageId) {
+            this.pageId = pageId;
+            return this;
+        }
+
+        public PageBuilder namespace(String namespace) {
+            this.namespace = namespace;
             return this;
         }
 

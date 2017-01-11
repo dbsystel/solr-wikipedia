@@ -6,8 +6,6 @@ import org.apache.commons.lang3.Validate;
 import org.solr.wikipedia.model.Page;
 import org.solr.wikipedia.model.Revision;
 
-import java.util.UUID;
-
 /**
  * Produces the Multimap of key/value pairs for a given Page to index in Solr.
  *
@@ -24,13 +22,17 @@ public class PageMultimap {
 
     public Multimap<String,Object> getMultimap() {
         Multimap<String,Object> multimap = HashMultimap.create();
-        multimap.put(IndexField.id.name(), UUID.nameUUIDFromBytes(
-                page.getTitle().getBytes()));
-        multimap.put(IndexField.TITLE.name(), page.getTitle());
+        multimap.put(IndexField.id.name(), String.format("%s:%s", page.getNamespace(), page.getPageId()));
+        multimap.put(IndexField.namespace.name(), page.getNamespace());
+        multimap.put(IndexField.pageId.name(), page.getPageId());
+
+        multimap.put(IndexField.title.name(), page.getTitle());
+        multimap.put(IndexField.url.name(), String.format("https://en.wikipedia.org/?curid=%s", page.getPageId()));
 
         for(Revision rev : page.getRevisions()) {
-            multimap.put(IndexField.REVISION_TIMESTAMP.name(), rev.getTimestamp());
-            multimap.put(IndexField.REVISION_TEXT.name(), rev.getText());
+            multimap.put(IndexField.date.name(), rev.getTimestamp());
+            multimap.put(IndexField.content.name(), rev.getText());
+            multimap.put(IndexField.category.name(), rev.getCategories());
         }
 
         return multimap;

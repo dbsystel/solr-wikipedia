@@ -4,7 +4,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Date;
+import java.util.*;
 
 /**
  * Represents a single revision of a page in the WikiMedia XML.
@@ -17,9 +17,12 @@ public class Revision {
 
     private final String text;
 
+    private final Set<String> categories;
+
     private Revision(RevisionBuilder builder) {
         this.timestamp = builder.timestamp;
         this.text = builder.text;
+        this.categories = new HashSet<>(builder.categories);
         Validate.notNull(this.timestamp);
         Validate.notNull(this.text);
     }
@@ -30,6 +33,10 @@ public class Revision {
 
     public String getText() {
         return text;
+    }
+
+    public Set<String> getCategories() {
+        return Collections.unmodifiableSet(categories);
     }
 
     @Override
@@ -59,6 +66,7 @@ public class Revision {
     public static class RevisionBuilder {
         private Date timestamp;
         private String text;
+        private Set<String> categories = new HashSet<>();
 
         public RevisionBuilder timestamp(Date date) {
             this.timestamp = date;
@@ -67,6 +75,11 @@ public class Revision {
 
         public RevisionBuilder text(String text) {
             this.text = text;
+            return this;
+        }
+
+        public RevisionBuilder categories(Collection<String> categories) {
+            this.categories.addAll(categories);
             return this;
         }
 

@@ -8,8 +8,11 @@ package org.solr.wikipedia.indexer;
 public enum IndexField {
 
     id,
-    TITLE,
-    REVISION_TIMESTAMP,
-    REVISION_TEXT;
-
+    namespace,
+    pageId,
+    title,
+    content,
+    date,
+    category,
+    url;
 }
